@@ -1,6 +1,4 @@
-﻿
-
-.crash-report-actions form {
+﻿.crash-report-actions form {
 	display: inline;
 	margin: 0 10px;
 }
@@ -8,6 +6,7 @@
 .full-report-banner {
 	text-align: center;
 }
+
 .full-report-banner span {
 	font-size: 18px;
 	padding-left: 20px;
