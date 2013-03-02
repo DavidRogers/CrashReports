@@ -5,8 +5,15 @@
 	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
 }
 
-	<div class="crash-report-full">
-		<h4>@Model.ErrorMessage</h4>
-		<p>Created: @TimeZoneInfo.ConvertTimeFromUtc(Model.Created, pstTimeZone).ToString("g")</p>
-		<p>@Model.StackTrace</p>
-	</div>
+<div>
+	@using (Html.BeginForm("Delete", "Reports", new { id = Model.Id }))
+	{
+		<button title="deletes the oldest crash log">purge</button>
+	}
+</div>
+
+<div class="crash-report-full">
+	<h4>@Model.ErrorMessage</h4>
+	<p>Created: @TimeZoneInfo.ConvertTimeFromUtc(Model.Created, pstTimeZone).ToString("g")</p>
+	<p>@Model.StackTrace</p>
+</div>

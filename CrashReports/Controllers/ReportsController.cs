@@ -90,7 +90,7 @@ namespace CrashReports.Controllers
 
 		[Authorize]
 		[HttpPost]
-		public ActionResult Flush()
+		public ActionResult Delete(int id)
 		{
 			if (!User.IsInRole("Admin"))
 				return View("Error");
