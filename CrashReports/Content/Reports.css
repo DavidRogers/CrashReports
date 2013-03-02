@@ -8,6 +8,19 @@
 }
 
 .full-report-banner span {
+	border-radius: 20px;
 	font-size: 18px;
-	padding-left: 20px;
+	padding: 10px;
+}
+
+.full-report-banner span.active {
+	background-color: orangered;
+}
+
+.full-report-banner span.ignored {
+	background-color: darkgrey;
+}
+
+.full-report-banner span.fixed {
+	background-color: green;
 }
