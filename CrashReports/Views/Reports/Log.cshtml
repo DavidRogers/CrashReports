@@ -1,0 +1,12 @@
+﻿@model CrashReports.Models.ReportModel
+
+@{
+	ViewBag.Title = "Crash Report";
+	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+}
+
+	<div class="crash-report-full">
+		<h4>@Model.ErrorMessage</h4>
+		<p>Created: @TimeZoneInfo.ConvertTimeFromUtc(Model.Created, pstTimeZone).ToString("g")</p>
+		<p>@Model.StackTrace</p>
+	</div>

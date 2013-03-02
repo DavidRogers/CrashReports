@@ -1,0 +1,20 @@
+﻿@model IEnumerable<CrashReports.Models.ReportModel>
+
+@{
+	ViewBag.Title = "Home Page";
+	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+}
+<nav>
+	@using (Html.BeginForm("Flush", "Reports"))
+	{
+		<button title="deletes the oldest crash log">purge</button>
+	}
+</nav>
+<h3>Crash Reports</h3>
+@foreach (var report in Model)
+{
+	<div class="crash-report">
+		<p>@TimeZoneInfo.ConvertTimeFromUtc(report.Created, pstTimeZone).ToString("g") @Html.ActionLink(report.ErrorMessage, "Log", new { id = report.Id }) (@report.Occurences) </p>
+	</div>
+}
+
