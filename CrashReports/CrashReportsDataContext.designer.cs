@@ -90,6 +90,8 @@ namespace CrashReports
 		
 		private string _UniqueId;
 		
+		private bool _Deleted;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -110,6 +112,8 @@ namespace CrashReports
     partial void OnFixedChanged();
     partial void OnUniqueIdChanging(string value);
     partial void OnUniqueIdChanged();
+    partial void OnDeletedChanging(bool value);
+    partial void OnDeletedChanged();
     #endregion
 		
 		public Report()
@@ -273,6 +277,26 @@ namespace CrashReports
 					this._UniqueId = value;
 					this.SendPropertyChanged("UniqueId");
 					this.OnUniqueIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Deleted", DbType="Bit NOT NULL")]
+		public bool Deleted
+		{
+			get
+			{
+				return this._Deleted;
+			}
+			set
+			{
+				if ((this._Deleted != value))
+				{
+					this.OnDeletedChanging(value);
+					this.SendPropertyChanging();
+					this._Deleted = value;
+					this.SendPropertyChanged("Deleted");
+					this.OnDeletedChanged();
 				}
 			}
 		}

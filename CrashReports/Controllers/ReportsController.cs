@@ -21,7 +21,7 @@ namespace CrashReports.Controllers
 			{
 				model.Reports = context
 					.Reports
-					.Where(x => !x.Fixed && !x.Ignore)
+					.Where(x => !x.Fixed && !x.Ignore && !x.Deleted)
 					.OrderByDescending(x => x.Created)
 					.Select(x => new ReportModel
 					{
@@ -104,7 +104,8 @@ namespace CrashReports.Controllers
 				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
 				if (report != null)
 				{
-					context.Reports.DeleteOnSubmit(report);
+					report.Deleted = true;
+					report.Details = "";
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
@@ -125,6 +126,7 @@ namespace CrashReports.Controllers
 				if (report != null)
 				{
 					report.Fixed = true;
+					report.Details = "";
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
@@ -145,6 +147,7 @@ namespace CrashReports.Controllers
 				if (report != null)
 				{
 					report.Ignore = true;
+					report.Details = "";
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
