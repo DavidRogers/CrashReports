@@ -1,12 +1,18 @@
-﻿@model IEnumerable<CrashReports.Models.ReportModel>
+﻿@model CrashReports.Models.FullReportViewModel
 
 @{
 	ViewBag.Title = "Home Page";
 	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
 }
 
-<h3>Crash Reports</h3>
-@foreach (var report in Model)
+<div class="full-report-banner">
+	<span>@Model.Reports.Count() active</span>
+	<span>@Model.FixedCount fixed</span>
+	<span>@Model.IgnoredCount reports</span>
+</div>
+
+<h3>Reports</h3>
+@foreach (var report in Model.Reports)
 {
 	<div class="crash-report">
 		<p>@TimeZoneInfo.ConvertTimeFromUtc(report.Created, pstTimeZone).ToString("g") @Html.ActionLink(report.ErrorMessage, "Log", new { id = report.Id }) (@report.Occurences) </p>

@@ -8,8 +8,17 @@
 <div>
 	@using (Html.BeginForm("Delete", "Reports", new { id = Model.Id }))
 	{
-		<button title="deletes the oldest crash log">purge</button>
+		<button title="Delete this log for good">purge</button>
 	}
+	@using (Html.BeginForm("MarkFixed", "Reports", new { id = Model.Id }))
+	{
+		<button title="Mark this error as fixed">Fixed</button>
+	}
+	@using (Html.BeginForm("Ignore", "Reports", new { id = Model.Id }))
+	{
+		<button title="Ignore this error">Ignore</button>
+	}
+
 </div>
 
 <div class="crash-report-full">

@@ -16,20 +16,24 @@ namespace CrashReports.Controllers
 		[Authorize]
 		public ActionResult Index()
 		{
-			List<ReportModel> reports = new List<ReportModel>();
+			FullReportViewModel model = new FullReportViewModel();
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
-				var results = context.Reports.OrderByDescending(x => x.Created);
-				reports.AddRange(results.Select(x => new ReportModel
-				{
-					Id = x.ReportId,
-					Created = x.Created,
-					ErrorMessage = x.Title,
-					Occurences = x.Occurences,
-					StackTrace = x.Details
-				}));
+				model.Reports = context
+					.Reports
+					.Where(x => !x.Fixed && !x.Ignore)
+					.OrderByDescending(x => x.Created)
+					.Select(x => new ReportModel
+					{
+						Id = x.ReportId,
+						Created = x.Created,
+						ErrorMessage = x.Title,
+						Occurences = x.Occurences,
+					}).ToList();
+				model.IgnoredCount = context.Reports.Count(x => x.Ignore);
+				model.FixedCount = context.Reports.Count(x => x.Fixed);
 			}
-			return View(reports);
+			return View(model);
 		}
 
 		public ActionResult Log(int id)
@@ -97,15 +101,56 @@ namespace CrashReports.Controllers
 
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
-				List<Report> reports = context.Reports.OrderBy(x => x.Created).Take(1).ToList();
-				ViewBag.ReportsDeleted = reports.Count();
-				context.Reports.DeleteAllOnSubmit(reports);
-				context.SubmitChanges(ConflictMode.ContinueOnConflict);
+				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
+				if (report != null)
+				{
+					context.Reports.DeleteOnSubmit(report);
+					context.SubmitChanges(ConflictMode.ContinueOnConflict);
+				}
 			}
-			TempData["SystemMessage"] = "Deleted 1 crash log";
+			TempData["SystemMessage"] = "Deleted crash log";
 			return RedirectToAction("Index");
 		}
 
+		[Authorize]
+		[HttpPost]
+		public ActionResult MarkFixed(int id)
+		{
+			if (!User.IsInRole("Admin"))
+				return View("Error");
+
+			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
+			{
+				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
+				if (report != null)
+				{
+					report.Fixed = true;
+					context.SubmitChanges(ConflictMode.ContinueOnConflict);
+				}
+			}
+
+			return RedirectToAction("Log", new { id });
+		}
+
+		[Authorize]
+		[HttpPost]
+		public ActionResult Ignore(int id)
+		{
+			if (!User.IsInRole("Admin"))
+				return View("Error");
+
+			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
+			{
+				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
+				if (report != null)
+				{
+					report.Ignore = true;
+					context.SubmitChanges(ConflictMode.ContinueOnConflict);
+				}
+			}
+
+			return RedirectToAction("Log", new { id });
+		}
 		private string GetUniqueId(string report)
 		{
 			using (MD5 hash = MD5.Create())
