@@ -5,10 +5,10 @@
 	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
 }
 
-<div>
+<div class="crash-report-actions">
 	@using (Html.BeginForm("Delete", "Reports", new { id = Model.Id }))
 	{
-		<button title="Delete this log for good">purge</button>
+		<button title="Delete this log for good">Purge</button>
 	}
 	@using (Html.BeginForm("MarkFixed", "Reports", new { id = Model.Id }))
 	{
