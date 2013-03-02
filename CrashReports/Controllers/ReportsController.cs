@@ -66,7 +66,7 @@ namespace CrashReports.Controllers
 			if (errorMessage.Length > 200)
 				errorMessage = errorMessage.Substring(0, 200);
 
-			details = Uri.UnescapeDataString(details);
+			details = Encoding.UTF8.GetString(Convert.FromBase64String(details));
 			if (details.Length > 10000)
 				details = details.Substring(details.Length - 10000, 10000);
 
