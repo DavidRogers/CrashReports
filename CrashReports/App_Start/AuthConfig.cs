@@ -26,7 +26,7 @@ namespace CrashReports
 			//    appId: "",
 			//    appSecret: "");
 
-			//OAuthWebSecurity.RegisterGoogleClient();
+			OAuthWebSecurity.RegisterGoogleClient();
 		}
 	}
 }
