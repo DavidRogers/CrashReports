@@ -5,9 +5,10 @@ namespace CrashReports.Models
 	public class ReportModel
 	{
 		public int Id { get; set; }
-		public string ErrorMessage { get; set; }
-		public string StackTrace { get; set; }
+		public string Title { get; set; }
+		public string Details { get; set; }
 		public DateTime Created { get; set; }
 		public int Occurences { get; set; }
+		public DateTime LastCrash { get; set; }
 	}
 }

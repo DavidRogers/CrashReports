@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Linq;
 using System.Linq;
@@ -27,9 +26,11 @@ namespace CrashReports.Controllers
 					{
 						Id = x.ReportId,
 						Created = x.Created,
-						ErrorMessage = x.Title,
+						Title = x.Title,
 						Occurences = x.Occurences,
+						LastCrash = x.LastCrash.GetValueOrDefault(x.Created)
 					}).ToList();
+
 				model.IgnoredCount = context.Reports.Count(x => x.Ignore);
 				model.FixedCount = context.Reports.Count(x => x.Fixed);
 			}
@@ -46,9 +47,10 @@ namespace CrashReports.Controllers
 				{
 					model.Id = result.ReportId;
 					model.Created = result.Created;
-					model.ErrorMessage = result.Title;
-					model.StackTrace = result.Details;
+					model.Title = result.Title;
+					model.Details = result.Details;
 					model.Occurences = result.Occurences;
+					model.LastCrash = result.LastCrash.GetValueOrDefault(result.Created);
 				}
 			}
 
@@ -78,15 +80,19 @@ namespace CrashReports.Controllers
 
 				if (previousReport == null)
 					context.Reports.InsertOnSubmit(new Report
-					{
-						Title = errorMessage,
-						Details = details.Trim(),
-						Created = DateTime.UtcNow,
-						UniqueId = uniqueId,
-						Occurences = 1
-					});
+						{
+							Title = errorMessage,
+							Details = details.Trim(),
+							Created = DateTime.UtcNow,
+							LastCrash = DateTime.UtcNow,
+							UniqueId = uniqueId,
+							Occurences = 1
+						});
 				else
+				{
+					previousReport.LastCrash = DateTime.UtcNow;
 					previousReport.Occurences++;
+				}
 
 				context.SubmitChanges(ConflictMode.ContinueOnConflict);
 			}
@@ -111,6 +117,7 @@ namespace CrashReports.Controllers
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
+
 			TempData["SystemMessage"] = "Deleted crash log";
 			return RedirectToAction("Index");
 		}
@@ -133,7 +140,8 @@ namespace CrashReports.Controllers
 				}
 			}
 
-			return RedirectToAction("Log", new { id });
+			TempData["SystemMessage"] = "crash log";
+			return RedirectToAction("Index");
 		}
 
 		[Authorize]
@@ -154,8 +162,10 @@ namespace CrashReports.Controllers
 				}
 			}
 
-			return RedirectToAction("Log", new { id });
+			TempData["SystemMessage"] = "Crash marked as ignored";
+			return RedirectToAction("Index");
 		}
+
 		private string GetUniqueId(string report)
 		{
 			using (MD5 hash = MD5.Create())

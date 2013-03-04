@@ -15,7 +15,7 @@
 @foreach (var report in Model.Reports)
 {
 	<div class="crash-report">
-		<p>@TimeZoneInfo.ConvertTimeFromUtc(report.Created, pstTimeZone).ToString("g") @Html.ActionLink(report.ErrorMessage, "Log", new { id = report.Id }) (@report.Occurences) </p>
+		<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id }) (@report.Occurences) </p>
 	</div>
 }
 

@@ -22,7 +22,8 @@
 </div>
 
 <div class="crash-report-full">
-	<h4>@Model.ErrorMessage</h4>
+	<h4>@Model.Title</h4>
 	<p>Created: @TimeZoneInfo.ConvertTimeFromUtc(Model.Created, pstTimeZone).ToString("g")</p>
-	<p><pre>@Model.StackTrace</pre></p>
+	<p>Last Crash: @TimeZoneInfo.ConvertTimeFromUtc(Model.LastCrash, pstTimeZone).ToString("g")</p>
+	<p><pre>@Model.Details</pre></p>
 </div>

@@ -92,6 +92,8 @@ namespace CrashReports
 		
 		private bool _Deleted;
 		
+		private DateTime? _LastCrash;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -114,6 +116,8 @@ namespace CrashReports
     partial void OnUniqueIdChanged();
     partial void OnDeletedChanging(bool value);
     partial void OnDeletedChanged();
+    partial void OnLastCrashChanging(DateTime? value);
+    partial void OnLastCrashChanged();
     #endregion
 		
 		public Report()
@@ -297,6 +301,26 @@ namespace CrashReports
 					this._Deleted = value;
 					this.SendPropertyChanged("Deleted");
 					this.OnDeletedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastCrash", DbType="DateTime", CanBeNull=false)]
+		public DateTime? LastCrash
+		{
+			get
+			{
+				return this._LastCrash;
+			}
+			set
+			{
+				if ((this._LastCrash != value))
+				{
+					this.OnLastCrashChanging(value);
+					this.SendPropertyChanging();
+					this._LastCrash = value;
+					this.SendPropertyChanged("LastCrash");
+					this.OnLastCrashChanged();
 				}
 			}
 		}
