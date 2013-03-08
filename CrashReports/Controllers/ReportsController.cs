@@ -63,17 +63,23 @@ namespace CrashReports.Controllers
 		[HttpPost]
 		public ActionResult CompressedLog()
 		{
-			byte[] byteData;
-			using (Stream stream = Request.GetBufferedInputStream())
-			using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
-			using (MemoryStream memStream = new MemoryStream())
-			{
-				gZipStream.CopyTo(memStream);
-				byteData = memStream.ToArray();
-			}
+			////byte[] byteData;
+			////using (Stream stream = Request.GetBufferedInputStream())
+			////using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
+			////using (MemoryStream memStream = new MemoryStream())
+			////{
+			////	gZipStream.CopyTo(memStream);
+			////	byteData = memStream.ToArray();
+			////}
 
-			string jsonData = Encoding.UTF8.GetString(byteData);
-			ReportModel data = Newtonsoft.Json.JsonConvert.DeserializeObject<ReportModel>(jsonData);
+			////string jsonData = Encoding.UTF8.GetString(byteData);
+			string content;
+			using (Stream input = Request.GetBufferlessInputStream())
+			using (StreamReader reader = new StreamReader(input))
+			{
+				content = reader.ReadToEnd();
+			}
+			ReportModel data = Newtonsoft.Json.JsonConvert.DeserializeObject<ReportModel>(content);
 
 			CaptureLogData(data);
 
