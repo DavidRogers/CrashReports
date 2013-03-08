@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.Linq;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -59,6 +61,56 @@ namespace CrashReports.Controllers
 		}
 
 		[HttpPost]
+		public ActionResult CompressedLog()
+		{
+			byte[] byteData;
+			using (Stream stream = Request.GetBufferedInputStream())
+			using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
+			using (MemoryStream memStream = new MemoryStream())
+			{
+				gZipStream.CopyTo(memStream);
+				byteData = memStream.ToArray();
+			}
+
+			string jsonData = Encoding.UTF8.GetString(byteData);
+			ReportModel data = Newtonsoft.Json.JsonConvert.DeserializeObject<ReportModel>(jsonData);
+
+			CaptureLogData(data);
+
+			return new HttpStatusCodeResult(HttpStatusCode.Accepted);
+		}
+
+		private void CaptureLogData(ReportModel data)
+		{
+			string uniqueId = GetUniqueId(data.Title + data.Details);
+
+			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
+			{
+				Report previousReport = context.Reports.FirstOrDefault(x => x.UniqueId == uniqueId);
+
+				if (previousReport == null)
+					context.Reports.InsertOnSubmit(new Report
+					{
+						Title = data.Title,
+						Details = data.Details,
+						AppName = data.ApplicationName,
+						UserId = data.UserId,
+						Created = DateTime.UtcNow,
+						LastCrash = DateTime.UtcNow,
+						UniqueId = uniqueId,
+						Occurences = 1
+					});
+				else
+				{
+					previousReport.LastCrash = DateTime.UtcNow;
+					previousReport.Occurences++;
+				}
+
+				context.SubmitChanges(ConflictMode.ContinueOnConflict);
+			}
+		}
+
+		[HttpPost]
 		public ActionResult Log(string errorMessage, string details, string appName = "Smores", int userId = 1)
 		{
 			// trim input to enforce length restraints
@@ -73,32 +125,7 @@ namespace CrashReports.Controllers
 			if (details.Length > 10000)
 				details = details.Substring(details.Length - 10000, 10000);
 
-			string uniqueId = GetUniqueId(errorMessage + details);
-
-			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
-			{
-				Report previousReport = context.Reports.FirstOrDefault(x => x.UniqueId == uniqueId);
-
-				if (previousReport == null)
-					context.Reports.InsertOnSubmit(new Report
-						{
-							Title = errorMessage,
-							Details = details.Trim(),
-							AppName = appName,
-							UserId = userId,
-							Created = DateTime.UtcNow,
-							LastCrash = DateTime.UtcNow,
-							UniqueId = uniqueId,
-							Occurences = 1
-						});
-				else
-				{
-					previousReport.LastCrash = DateTime.UtcNow;
-					previousReport.Occurences++;
-				}
-
-				context.SubmitChanges(ConflictMode.ContinueOnConflict);
-			}
+			CaptureLogData(new ReportModel { ApplicationName = appName, Details = details, Title = errorMessage, UserId = userId });
 
 			return new HttpStatusCodeResult(HttpStatusCode.Accepted);
 		}

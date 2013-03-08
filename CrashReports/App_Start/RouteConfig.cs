@@ -15,6 +15,12 @@ namespace CrashReports
 
 			routes.MapRoute(
 				name: "Default",
+				url: "reports/log/compressed",
+				defaults: new { controller = "Reports", action = "CompressedLog", id = UrlParameter.Optional }
+			);
+
+			routes.MapRoute(
+				name: "Default",
 				url: "{controller}/{action}/{id}",
 				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
 			);
