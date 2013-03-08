@@ -98,6 +98,8 @@ namespace CrashReports
 		
 		private string _AppName;
 		
+		private string _AppVersion;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -126,6 +128,8 @@ namespace CrashReports
     partial void OnUserIdChanged();
     partial void OnAppNameChanging(string value);
     partial void OnAppNameChanged();
+    partial void OnAppVersionChanging(string value);
+    partial void OnAppVersionChanged();
     #endregion
 		
 		public Report()
@@ -369,6 +373,26 @@ namespace CrashReports
 					this._AppName = value;
 					this.SendPropertyChanged("AppName");
 					this.OnAppNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppVersion", DbType="NVarChar(20)")]
+		public string AppVersion
+		{
+			get
+			{
+				return this._AppVersion;
+			}
+			set
+			{
+				if ((this._AppVersion != value))
+				{
+					this.OnAppVersionChanging(value);
+					this.SendPropertyChanging();
+					this._AppVersion = value;
+					this.SendPropertyChanged("AppVersion");
+					this.OnAppVersionChanged();
 				}
 			}
 		}

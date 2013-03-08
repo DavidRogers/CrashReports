@@ -98,6 +98,7 @@ namespace CrashReports.Controllers
 						Created = DateTime.UtcNow,
 						LastCrash = DateTime.UtcNow,
 						UniqueId = uniqueId,
+						AppVersion = data.AppVersion,
 						Occurences = 1
 					});
 				else

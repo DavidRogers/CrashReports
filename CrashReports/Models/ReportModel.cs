@@ -12,5 +12,6 @@ namespace CrashReports.Models
 		public DateTime LastCrash { get; set; }
 		public string ApplicationName { get; set; }
 		public int UserId { get; set; }
+		public string AppVersion { get; set; }
 	}
 }
