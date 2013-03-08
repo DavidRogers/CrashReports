@@ -15,6 +15,7 @@ namespace CrashReports.Controllers
 {
 	[Authorize]
 	[InitializeSimpleMembership]
+	[RequireHttps]
 	public class AccountController : Controller
 	{
 		//
