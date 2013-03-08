@@ -92,7 +92,11 @@ namespace CrashReports
 		
 		private bool _Deleted;
 		
-		private DateTime? _LastCrash;
+		private System.Nullable<System.DateTime> _LastCrash;
+		
+		private int _UserId;
+		
+		private string _AppName;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -116,8 +120,12 @@ namespace CrashReports
     partial void OnUniqueIdChanged();
     partial void OnDeletedChanging(bool value);
     partial void OnDeletedChanged();
-    partial void OnLastCrashChanging(DateTime? value);
+    partial void OnLastCrashChanging(System.Nullable<System.DateTime> value);
     partial void OnLastCrashChanged();
+    partial void OnUserIdChanging(int value);
+    partial void OnUserIdChanged();
+    partial void OnAppNameChanging(string value);
+    partial void OnAppNameChanged();
     #endregion
 		
 		public Report()
@@ -305,8 +313,8 @@ namespace CrashReports
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastCrash", DbType="DateTime", CanBeNull=false)]
-		public DateTime? LastCrash
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastCrash", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LastCrash
 		{
 			get
 			{
@@ -321,6 +329,46 @@ namespace CrashReports
 					this._LastCrash = value;
 					this.SendPropertyChanged("LastCrash");
 					this.OnLastCrashChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="Int NOT NULL")]
+		public int UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string AppName
+		{
+			get
+			{
+				return this._AppName;
+			}
+			set
+			{
+				if ((this._AppName != value))
+				{
+					this.OnAppNameChanging(value);
+					this.SendPropertyChanging();
+					this._AppName = value;
+					this.SendPropertyChanged("AppName");
+					this.OnAppNameChanged();
 				}
 			}
 		}

@@ -37,6 +37,7 @@ namespace CrashReports.Controllers
 			return View(model);
 		}
 
+		[Authorize]
 		public ActionResult Log(int id)
 		{
 			ReportModel model = new ReportModel();
@@ -58,7 +59,7 @@ namespace CrashReports.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Log(string errorMessage, string details)
+		public ActionResult Log(string errorMessage, string details, string appName = "Smores", int userId = 1)
 		{
 			// trim input to enforce length restraints
 			if (string.IsNullOrWhiteSpace(errorMessage) || string.IsNullOrWhiteSpace(details))
@@ -83,6 +84,8 @@ namespace CrashReports.Controllers
 						{
 							Title = errorMessage,
 							Details = details.Trim(),
+							AppName = appName,
+							UserId = userId,
 							Created = DateTime.UtcNow,
 							LastCrash = DateTime.UtcNow,
 							UniqueId = uniqueId,
