@@ -45,13 +45,15 @@ namespace CrashReports.Controllers
 			ReportModel model = new ReportModel();
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
-				var result = context.Reports.FirstOrDefault(x => x.ReportId == id);
+				Report result = context.Reports.FirstOrDefault(x => x.ReportId == id);
 				if (result != null)
 				{
 					model.Id = result.ReportId;
 					model.Created = result.Created;
 					model.Title = result.Title;
 					model.Details = result.Details;
+					model.AppVersion = result.AppVersion;
+					model.ApplicationName = result.AppName;
 					model.Occurences = result.Occurences;
 					model.LastCrash = result.LastCrash.GetValueOrDefault(result.Created);
 				}
