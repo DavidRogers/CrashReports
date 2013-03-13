@@ -120,7 +120,7 @@ namespace CrashReports.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Log(string errorMessage, string details, string appName = "Smores", int userId = 1)
+		public ActionResult Log(string errorMessage, string details, string appName = "Smores", string appVersion = "1.0.0", int userId = 1)
 		{
 			// trim input to enforce length restraints
 			if (string.IsNullOrWhiteSpace(errorMessage) || string.IsNullOrWhiteSpace(details))
@@ -134,7 +134,7 @@ namespace CrashReports.Controllers
 			if (details.Length > 10000)
 				details = details.Substring(details.Length - 10000, 10000);
 
-			CaptureLogData(new ReportModel { ApplicationName = appName, Details = details, Title = errorMessage, UserId = userId });
+			CaptureLogData(new ReportModel { ApplicationName = appName, Details = details, Title = errorMessage, AppVersion = appVersion, UserId = userId });
 
 			return new HttpStatusCodeResult(HttpStatusCode.Accepted);
 		}
