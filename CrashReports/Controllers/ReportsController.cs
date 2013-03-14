@@ -107,7 +107,8 @@ namespace CrashReports.Controllers
 						LastCrash = DateTime.UtcNow,
 						UniqueId = uniqueId,
 						AppVersion = data.AppVersion,
-						Occurences = 1
+						Occurences = 1,
+						OperatingSystem = data.OperatingSystem
 					});
 				else
 				{

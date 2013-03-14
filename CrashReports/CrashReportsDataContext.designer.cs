@@ -100,6 +100,8 @@ namespace CrashReports
 		
 		private string _AppVersion;
 		
+		private string _OperatingSystem;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -130,6 +132,8 @@ namespace CrashReports
     partial void OnAppNameChanged();
     partial void OnAppVersionChanging(string value);
     partial void OnAppVersionChanged();
+    partial void OnOperatingSystemChanging(string value);
+    partial void OnOperatingSystemChanged();
     #endregion
 		
 		public Report()
@@ -393,6 +397,26 @@ namespace CrashReports
 					this._AppVersion = value;
 					this.SendPropertyChanged("AppVersion");
 					this.OnAppVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="OS", Storage="_OperatingSystem", DbType="NVarChar(50)")]
+		public string OperatingSystem
+		{
+			get
+			{
+				return this._OperatingSystem;
+			}
+			set
+			{
+				if ((this._OperatingSystem != value))
+				{
+					this.OnOperatingSystemChanging(value);
+					this.SendPropertyChanging();
+					this._OperatingSystem = value;
+					this.SendPropertyChanged("OperatingSystem");
+					this.OnOperatingSystemChanged();
 				}
 			}
 		}

@@ -13,5 +13,6 @@ namespace CrashReports.Models
 		public string ApplicationName { get; set; }
 		public int UserId { get; set; }
 		public string AppVersion { get; set; }
+		public string OperatingSystem { get; set; }
 	}
 }

@@ -14,6 +14,7 @@
       <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="AppName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="AppVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="OS" Member="OperatingSystem" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
