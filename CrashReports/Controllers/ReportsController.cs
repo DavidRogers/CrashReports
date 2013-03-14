@@ -56,6 +56,7 @@ namespace CrashReports.Controllers
 					model.ApplicationName = result.AppName;
 					model.Occurences = result.Occurences;
 					model.LastCrash = result.LastCrash.GetValueOrDefault(result.Created);
+					model.OperatingSystem = result.OperatingSystem;
 				}
 			}
 
