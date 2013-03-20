@@ -113,6 +113,14 @@ namespace CrashReports.Controllers
 					});
 				else
 				{
+					if (previousReport.Deleted || previousReport.Ignore)
+						return;
+
+					// handle case where the crash was fixed in an old version but is appearing again in a new version
+					Version previousVersion = new Version(string.IsNullOrWhiteSpace(previousReport.AppVersion) ? "1.0" : previousReport.AppVersion);
+					if (previousReport.Fixed && previousVersion < Version.Parse(string.IsNullOrWhiteSpace(data.AppVersion) ? "1.0" : data.AppVersion))
+						previousReport.Fixed = false;
+
 					previousReport.LastCrash = DateTime.UtcNow;
 					previousReport.Occurences++;
 				}
