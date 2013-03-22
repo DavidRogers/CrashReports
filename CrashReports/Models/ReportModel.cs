@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace CrashReports.Models
 {
@@ -14,5 +15,16 @@ namespace CrashReports.Models
 		public int UserId { get; set; }
 		public string AppVersion { get; set; }
 		public string OperatingSystem { get; set; }
+
+		[JsonIgnore]
+		public Version ApplicationVersion
+		{
+			get
+			{
+				return m_applicationVersion ??
+					(m_applicationVersion = new Version(string.IsNullOrWhiteSpace(AppVersion) ? "1.00" : AppVersion));
+			}
+		}
+		Version m_applicationVersion;
 	}
 }

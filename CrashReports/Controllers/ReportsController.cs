@@ -29,6 +29,7 @@ namespace CrashReports.Controllers
 						Id = x.ReportId,
 						Created = x.Created,
 						Title = x.Title,
+						AppVersion = x.AppVersion,
 						Occurences = x.Occurences,
 						LastCrash = x.LastCrash.GetValueOrDefault(x.Created)
 					}).ToList();
