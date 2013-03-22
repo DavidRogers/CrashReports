@@ -16,7 +16,7 @@
 <h3>Reports</h3>
 @foreach (ReportModel report in Model.Reports.OrderByDescending(x => x.ApplicationVersion).ThenByDescending(x => x.LastCrash))
 {
-		@if (groupName != report.AppVersion)
+		if (groupName != report.AppVersion)
 		{
 			groupName = report.AppVersion;
 			<h4>@groupName</h4>
