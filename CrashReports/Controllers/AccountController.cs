@@ -223,7 +223,7 @@ namespace CrashReports.Controllers
 				return RedirectToAction("ExternalLoginFailure");
 			}
 
-			if (OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false))
+			if (OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: true))
 			{
 				return RedirectToLocal(returnUrl);
 			}
@@ -274,7 +274,7 @@ namespace CrashReports.Controllers
 						db.SaveChanges();
 
 						OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
-						OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
+						OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: true);
 
 						return RedirectToLocal(returnUrl);
 					}

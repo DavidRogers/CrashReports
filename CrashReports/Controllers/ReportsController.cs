@@ -91,7 +91,7 @@ namespace CrashReports.Controllers
 
 		private void CaptureLogData(ReportModel data)
 		{
-			string uniqueId = GetUniqueId(data.Title + data.Details);
+			string uniqueId = GetUniqueId(data.Title, data.Details);
 
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
@@ -161,8 +161,7 @@ namespace CrashReports.Controllers
 				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
 				if (report != null)
 				{
-					report.Deleted = true;
-					report.Details = "";
+					context.Reports.DeleteOnSubmit(report);
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
@@ -215,11 +214,12 @@ namespace CrashReports.Controllers
 			return RedirectToAction("Index");
 		}
 
-		private string GetUniqueId(string report)
+		private string GetUniqueId(string message, string stackTrace)
 		{
+			string shortTrace = string.Join("\r\n", stackTrace.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).Take(3));
 			using (MD5 hash = MD5.Create())
 			{
-				byte[] data = hash.ComputeHash(Encoding.UTF8.GetBytes(report));
+				byte[] data = hash.ComputeHash(Encoding.UTF8.GetBytes(message + shortTrace));
 				StringBuilder sBuilder = new StringBuilder();
 
 				// Loop through each byte of the hashed data  
