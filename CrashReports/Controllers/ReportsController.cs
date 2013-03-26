@@ -8,10 +8,12 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
+using CrashReports.Filters;
 using CrashReports.Models;
 
 namespace CrashReports.Controllers
 {
+	[InitializeSimpleMembership]
 	public class ReportsController : Controller
 	{
 		[Authorize]
