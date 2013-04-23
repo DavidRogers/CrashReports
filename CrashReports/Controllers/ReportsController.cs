@@ -124,6 +124,7 @@ namespace CrashReports.Controllers
 					if (previousReport.Fixed &&
 						previousVersion < Version.Parse(string.IsNullOrWhiteSpace(data.AppVersion) ? "1.0" : data.AppVersion))
 					{
+						previousReport.AppVersion = data.AppVersion;
 						previousReport.Fixed = false;
 						previousReport.Details = data.Details;
 					}
