@@ -52,8 +52,8 @@ namespace CrashReports.Controllers
 						LastCrash = x.LastCrash.GetValueOrDefault(x.Created)
 					}).ToList();
 
-				model.IgnoredCount = context.Reports.Count(x => x.Ignore);
-				model.FixedCount = context.Reports.Count(x => x.Fixed);
+				model.IgnoredCount = context.Reports.Where(x => x.AppName == appName).Count(x => x.Ignore);
+				model.FixedCount = context.Reports.Where(x => x.AppName == appName).Count(x => x.Fixed);
 			}
 			return View(model);
 		}
