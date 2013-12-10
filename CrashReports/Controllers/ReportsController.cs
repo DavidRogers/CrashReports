@@ -19,18 +19,34 @@ namespace CrashReports.Controllers
 		[Authorize]
 		public ActionResult Index()
 		{
+			ReportsIndexViewModel model = new ReportsIndexViewModel();
+			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
+			{
+				model.Applications = context
+					.Reports
+					.Select(x => x.AppName)
+					.Distinct()
+					.ToList();
+			}
+			return View(model);
+		}
+
+		[Authorize]
+		public ActionResult Application(string appName)
+		{
 			FullReportViewModel model = new FullReportViewModel();
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
 				model.Reports = context
 					.Reports
-					.Where(x => !x.Fixed && !x.Ignore && !x.Deleted)
+					.Where(x => !x.Fixed && !x.Ignore && !x.Deleted && x.AppName == appName)
 					.OrderByDescending(x => x.Created)
 					.Select(x => new ReportModel
 					{
 						Id = x.ReportId,
 						Created = x.Created,
 						Title = x.Title,
+						ApplicationName = x.AppName,
 						AppVersion = x.AppVersion,
 						Occurences = x.Occurences,
 						LastCrash = x.LastCrash.GetValueOrDefault(x.Created)

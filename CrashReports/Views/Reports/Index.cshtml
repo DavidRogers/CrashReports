@@ -1,29 +1,13 @@
 ﻿@using CrashReports.Models
-@model CrashReports.Models.FullReportViewModel
+@model CrashReports.Models.ReportsIndexViewModel
 
 @{
-	ViewBag.Title = "Home Page";
-	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-	string groupName = "";
+	ViewBag.Title = "Applications";
 }
 
 <div class="full-report-banner">
-	<span class="active"><strong>@Model.Reports.Count()</strong> active</span>
-	<span class="fixed"><strong>@Model.FixedCount</strong> fixed</span>
-	<span class="ignored"><strong>@Model.IgnoredCount</strong> ignored</span>
+	@foreach (string app in Model.Applications)
+	{
+		@Html.ActionLink(app, "Application", new { appName = app})
+	}
 </div>
-
-<h3>Reports</h3>
-@foreach (ReportModel report in Model.Reports.OrderByDescending(x => x.ApplicationVersion).ThenByDescending(x => x.LastCrash))
-{
-		if (groupName != report.AppVersion)
-		{
-			groupName = report.AppVersion;
-			<h4>@groupName</h4>
-		}
-
-		<div class="crash-report">
-		<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id }) (@report.Occurences)</p>
-	</div>
-}
-
