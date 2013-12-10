@@ -164,6 +164,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Models\ReportsIndexViewModel.cs" />
     <Compile Include="CrashReportsDataContext.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -297,6 +298,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Reports\Log.cshtml" />
+    <Content Include="Views\Reports\Application.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
