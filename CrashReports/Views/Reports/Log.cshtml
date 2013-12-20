@@ -10,7 +10,7 @@
 	{
 		<button title="Delete this log for good">Purge</button>
 	}
-	@using (Html.BeginForm("MarkFixed", "Reports", new { id = Model.Id }))
+	@using (Html.BeginForm("MarkFixed", "Reports", new { id = Model.Id, version = Model.AppVersion }))
 	{
 		<button title="Mark this error as fixed">Fixed</button>
 	}

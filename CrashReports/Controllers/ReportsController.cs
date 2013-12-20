@@ -34,8 +34,11 @@ namespace CrashReports.Controllers
 						ApplicationName = x.AppName,
 						AppVersion = x.AppVersion,
 						Occurences = x.Occurences,
+						Fixed = x.Fixed,
+						FixedInVersion = x.FixedInVersion,
 						LastCrash = x.LastCrash.GetValueOrDefault(x.Created)
-					}).ToList();
+					})
+					.ToList();
 
 				model.Applications = context
 					.Reports
@@ -74,7 +77,7 @@ namespace CrashReports.Controllers
 		}
 
 		[Authorize]
-		public ActionResult Log(int id)
+		public ActionResult Log(int id, string version)
 		{
 			ReportModel model = new ReportModel();
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
@@ -86,7 +89,7 @@ namespace CrashReports.Controllers
 					model.Created = result.Created;
 					model.Title = result.Title;
 					model.Details = result.Details;
-					model.AppVersion = result.AppVersion;
+					model.AppVersion = version;
 					model.ApplicationName = result.AppName;
 					model.Occurences = result.Occurences;
 					model.LastCrash = result.LastCrash.GetValueOrDefault(result.Created);
@@ -150,16 +153,12 @@ namespace CrashReports.Controllers
 					if (previousReport.Deleted || previousReport.Ignore)
 						return;
 
-					// handle case where the crash was fixed in an old version but is appearing again in a new version
-					Version previousVersion = new Version(string.IsNullOrWhiteSpace(previousReport.AppVersion) ? "1.0" : previousReport.AppVersion);
-					if (previousReport.Fixed &&
-						previousVersion < Version.Parse(string.IsNullOrWhiteSpace(data.AppVersion) ? "1.0" : data.AppVersion))
+					if (!previousReport.AppVersions.Contains(data.AppVersion))
 					{
-						previousReport.AppVersion = data.AppVersion;
+						previousReport.AppVersion = previousReport.AddAppVersion(data.AppVersion);
 						previousReport.Fixed = false;
 						previousReport.Details = data.Details;
 					}
-
 					previousReport.LastCrash = DateTime.UtcNow;
 					previousReport.Occurences++;
 				}
@@ -211,7 +210,7 @@ namespace CrashReports.Controllers
 
 		[Authorize]
 		[HttpPost]
-		public ActionResult MarkFixed(int id)
+		public ActionResult MarkFixed(int id, string version)
 		{
 			if (!User.IsInRole("Admin"))
 				return View("Error");
@@ -222,6 +221,7 @@ namespace CrashReports.Controllers
 				if (report != null)
 				{
 					report.Fixed = true;
+					report.FixedInVersion = report.AddFixedVersion(version);
 					report.Details = "";
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}

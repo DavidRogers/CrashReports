@@ -15,15 +15,17 @@
 </div>
 
 <h3>Latest Reports from the last 14 days</h3>
-@foreach (ReportModel report in Model.Reports.OrderByDescending(x => x.ApplicationVersion).ThenByDescending(x => x.LastCrash))
+@foreach (var app in Model.Reports.GroupBy(x => x.ApplicationName))
 {
-		if (groupName != report.AppVersion)
+	<h3>@app</h3>
+	foreach (var version in app.OrderByDescending(x => x.LastCrash).GroupBy(x => x.AppVersions))
+	{
+		<h4>@version.Key.ToString()</h4>
+		foreach(var report in version)
 		{
-			groupName = report.AppVersion;
-			<h4>@groupName</h4>
+			<div class="crash-report">
+				<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.Key.ToString() }) (@report.Occurences)</p>
+			</div>
 		}
-
-		<div class="crash-report">
-		<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id }) (@report.Occurences)</p>
-	</div>
+	}
 }

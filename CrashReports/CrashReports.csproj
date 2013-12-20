@@ -177,6 +177,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\FullReportViewModel.cs" />
     <Compile Include="Models\ReportModel.cs" />
+    <Compile Include="PartialModels\Report.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

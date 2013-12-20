@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace CrashReports.Models
@@ -15,6 +16,13 @@ namespace CrashReports.Models
 		public int UserId { get; set; }
 		public string AppVersion { get; set; }
 		public string OperatingSystem { get; set; }
+		public string FixedInVersion { get; set; }
+		public bool Fixed { get; set; }
+
+		[JsonIgnore]
+		public Version[] FixedInVersions { get { return FixedInVersion.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
+		[JsonIgnore]
+		public Version[] AppVersions { get { return AppVersion.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
 
 		[JsonIgnore]
 		public Version ApplicationVersion
@@ -22,7 +30,7 @@ namespace CrashReports.Models
 			get
 			{
 				return m_applicationVersion ??
-					(m_applicationVersion = new Version(string.IsNullOrWhiteSpace(AppVersion) ? "1.00" : AppVersion));
+					(m_applicationVersion = string.IsNullOrWhiteSpace(AppVersion) ? new Version("1.00") : AppVersions.Max());
 			}
 		}
 		Version m_applicationVersion;
