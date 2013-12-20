@@ -13,13 +13,13 @@
 </div>
 
 <h3>Reports</h3>
-@foreach (var version in Model.Reports.OrderByDescending(x => x.AppVersions).Select(x => x.ApplicationVersion))
-{
-	<h4>@version.ToString()</h4>
-	foreach (var report in Model.Reports.Where(x => x.AppVersions.Contains(version)).OrderByDescending(x => x.LastCrash))
+	@foreach (Version version in Model.Reports.SelectMany(x => x.AppVersions).Distinct().OrderByDescending(x => x))
 	{
-		<div class="crash-report">
-			<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.ToString() }) (@report.Occurences)</p>
-		</div>
+		<h4>@version.ToString()</h4>
+		foreach (var report in Model.Reports.Where(x => x.AppVersions.Contains(version)).OrderByDescending(x => x.LastCrash))
+		{
+			<div class="crash-report">
+				<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.ToString() }) (@report.Occurences)</p>
+			</div>
+		}
 	}
-}
