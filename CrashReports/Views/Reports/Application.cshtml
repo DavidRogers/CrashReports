@@ -19,7 +19,7 @@
 	foreach (var report in Model.Reports.Where(x => x.AppVersions.Contains(version)).OrderByDescending(x => x.LastCrash))
 	{
 		<div class="crash-report">
-			<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.Key.ToString() }) (@report.Occurences)</p>
+			<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.ToString() }) (@report.Occurences)</p>
 		</div>
 	}
 }
