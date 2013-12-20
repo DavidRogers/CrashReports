@@ -1,10 +1,9 @@
 ﻿@using CrashReports.Models
-@model CrashReports.Models.FullReportViewModel
+@model FullReportViewModel
 
 @{
 	ViewBag.Title = "Crash Reports";
 	TimeZoneInfo pstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-	string groupName = "";
 }
 
 <div class="full-report-banner">
@@ -14,10 +13,10 @@
 </div>
 
 <h3>Reports</h3>
-@foreach (var version in Model.Reports.OrderByDescending(x => x.LastCrash).GroupBy(x => x.AppVersions))
+@foreach (var version in Model.Reports.OrderByDescending(x => x.AppVersions).Select(x => x.ApplicationVersion))
 {
-	<h4>@version.Key.ToString()</h4>
-	foreach(var report in version)
+	<h4>@version.ToString()</h4>
+	foreach (var report in Model.Reports.Where(x => x.AppVersions.Contains(version)).OrderByDescending(x => x.LastCrash))
 	{
 		<div class="crash-report">
 			<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.Key.ToString() }) (@report.Occurences)</p>
