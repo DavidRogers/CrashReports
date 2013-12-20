@@ -194,18 +194,20 @@ namespace CrashReports.Controllers
 			if (!User.IsInRole("Admin"))
 				return View("Error");
 
+			string appName = null;
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
-				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
+				Report report = context.Reports.First(x => x.ReportId == id);
 				if (report != null)
 				{
+					appName = report.AppName;
 					context.Reports.DeleteOnSubmit(report);
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
 
 			TempData["SystemMessage"] = "Deleted crash log";
-			return RedirectToAction("Index");
+			return RedirectToAction("Application", new { appName });
 		}
 
 		[Authorize]
@@ -215,20 +217,19 @@ namespace CrashReports.Controllers
 			if (!User.IsInRole("Admin"))
 				return View("Error");
 
+			string appName = null;
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
-				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
-				if (report != null)
-				{
-					report.Fixed = true;
-					report.FixedInVersion = report.AddFixedVersion(version);
-					report.Details = "";
-					context.SubmitChanges(ConflictMode.ContinueOnConflict);
-				}
+				Report report = context.Reports.First(x => x.ReportId == id);
+				report.Fixed = true;
+				report.FixedInVersion = report.AddFixedVersion(version);
+				report.Details = "";
+				appName = report.AppName;
+				context.SubmitChanges(ConflictMode.ContinueOnConflict);
 			}
 
 			TempData["SystemMessage"] = "crash log";
-			return RedirectToAction("Index");
+			return RedirectToAction("Application", new { appName });
 		}
 
 		[Authorize]
@@ -238,6 +239,7 @@ namespace CrashReports.Controllers
 			if (!User.IsInRole("Admin"))
 				return View("Error");
 
+			string appName = null;
 			using (CrashReportsDataContext context = new CrashReportsDataContext(ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"]))
 			{
 				Report report = context.Reports.FirstOrDefault(x => x.ReportId == id);
@@ -245,12 +247,13 @@ namespace CrashReports.Controllers
 				{
 					report.Ignore = true;
 					report.Details = "";
+					appName = report.AppName;
 					context.SubmitChanges(ConflictMode.ContinueOnConflict);
 				}
 			}
 
 			TempData["SystemMessage"] = "Crash marked as ignored";
-			return RedirectToAction("Index");
+			return RedirectToAction("Application", new { appName });
 		}
 
 		private string GetUniqueId(string message, string stackTrace)
