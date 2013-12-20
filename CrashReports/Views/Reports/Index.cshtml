@@ -17,11 +17,11 @@
 <h3>Latest Reports from the last 14 days</h3>
 @foreach (var app in Model.Reports.GroupBy(x => x.ApplicationName))
 {
-	<h3>@app</h3>
-	foreach (var version in app.OrderByDescending(x => x.LastCrash).GroupBy(x => x.AppVersions))
+	<h3>@app.Key</h3>
+	foreach (var version in app.OrderByDescending(x => x.AppVersions).Select(x => x.ApplicationVersion))
 	{
-		<h4>@version.Key.ToString()</h4>
-		foreach(var report in version)
+		<h4>@version.ToString()</h4>
+		foreach (var report in app.Where(x => x.AppVersions.Contains(version)).OrderByDescending(x => x.LastCrash))
 		{
 			<div class="crash-report">
 				<p><strong>@TimeZoneInfo.ConvertTimeFromUtc(report.LastCrash, pstTimeZone).ToString("g")</strong> @Html.ActionLink(report.Title, "Log", new { id = report.Id, version = version.Key.ToString() }) (@report.Occurences)</p>
