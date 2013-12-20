@@ -20,9 +20,9 @@ namespace CrashReports.Models
 		public bool Fixed { get; set; }
 
 		[JsonIgnore]
-		public Version[] FixedInVersions { get { return FixedInVersion.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
+		public Version[] FixedInVersions { get { return (FixedInVersion ?? "").Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
 		[JsonIgnore]
-		public Version[] AppVersions { get { return AppVersion.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
+		public Version[] AppVersions { get { return (AppVersion ?? "").Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(x => new Version(x)).ToArray(); } }
 
 		[JsonIgnore]
 		public Version ApplicationVersion
